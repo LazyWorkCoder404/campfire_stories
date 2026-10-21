@@ -1,0 +1,13 @@
+
+Architecture shape:
+
+Browser UI (fullscreen kiosk)
+      │  WebSocket: story tokens, images, audio, hardware stats
+      ▼
+Orchestrator (Python + FastAPI)
+      ├── LLM server ........ llama.cpp / Ollama   → writing + editing
+      ├── ComfyUI ........... image (and video) gen → scene illustrations
+      ├── TTS ............... Kokoro or Piper       → narration
+      ├── Whisper (optional)  faster-whisper        → spoken prompts
+      ├── ffmpeg ............ assembles the takeaway video
+      └── Telemetry loop .... GPU/NPU stats → drives the fire + panels

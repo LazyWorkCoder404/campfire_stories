@@ -1,3 +1,35 @@
+# Virtual environments
+.venv/
+venv/
+
+# ComfyUI (its own repo, plus multi-GB models)
+services/ComfyUI/
+
+# Generated stories, images, audio, video
+output/
+
+# Model files, wherever they end up
+*.safetensors
+*.ckpt
+*.gguf
+*.pt
+*.pth
+*.onnx
+
+# Python cache
+__pycache__/
+*.pyc
+
+# PyCharm settings
+.idea/
+
+# Test audio and scratch files
+*.wav
+
+# Secrets and OS clutter
+.env
+.DS_Store
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[codz]
