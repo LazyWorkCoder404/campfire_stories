@@ -4,6 +4,7 @@ const statusText = document.getElementById("status");
 const story = document.getElementById("story");
 const scariness = document.getElementById("scariness");
 const scarinessValue = document.getElementById("scariness-value");
+const gallery = document.getElementById("gallery");
 
 // Show the slider's number next to its label as it moves
 scariness.addEventListener("input", () => {
@@ -20,8 +21,15 @@ function connect() {
   socket.addEventListener("message", (event) => {
     const message = JSON.parse(event.data);
 
-    if (message.type === "token") {
+     if (message.type === "token") {
       story.textContent += message.text;          // add the new piece of story
+    } else if (message.type === "stage") {
+      statusText.textContent = message.stage;     // what the pipeline is doing now
+    } else if (message.type === "image") {
+      const img = document.createElement("img");  // build a new <img> element
+      img.src = message.url;
+      img.alt = message.caption;
+      gallery.appendChild(img);                   // and add it to the page
     } else if (message.type === "done") {
       finish("Tap the fire for another story");
     } else if (message.type === "error") {
@@ -52,6 +60,7 @@ fire.addEventListener("click", () => {
   };
 
   story.textContent = "";                // clear the last story
+  gallery.innerHTML = "";                // and its pictures
   fire.disabled = true;                  // no double-taps while writing
   fire.classList.add("roaring");         // turn on the CSS roaring effect
   statusText.textContent = "The storyteller leans in...";

@@ -221,3 +221,26 @@ h1 {
                   rgba(255, 122, 26, calc(0.25 + var(--heat, 0) * 0.45));
   transition: box-shadow 0.4s;
 }
+
+/* ---------- The illustrations ---------- */
+#gallery {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 16px;
+  max-width: 960px;
+  width: 100%;
+}
+
+#gallery:empty { display: none; }
+
+#gallery img {
+  width: 100%;
+  border-radius: 12px;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.6);
+  animation: fade-in 1.2s ease-out;
+}
+
+@keyframes fade-in {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
