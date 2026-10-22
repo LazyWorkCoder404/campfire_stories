@@ -1,3 +1,4 @@
+
 # Virtual environments
 .venv/
 venv/
@@ -15,6 +16,7 @@ output/
 *.pt
 *.pth
 *.onnx
+/logs
 
 # Python cache
 __pycache__/
