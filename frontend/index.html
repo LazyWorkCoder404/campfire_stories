@@ -73,6 +73,7 @@
   </section>
 
   <p id="status">Tap the fire for a story</p>
+  <button id="animate" hidden>Bring it to life!</button>
 
   <!-- Where the story appears -->
   <article id="story"></article>
@@ -80,6 +81,14 @@
   <!-- Where the illustrations appear -->
   <section id="gallery"></section>
 
+    <!-- The film player: covers the screen while a story plays -->
+  <div id="player" title="Click to stop">
+    <img id="player-image" alt="">
+    <p id="player-subtitle"></p>
+    <audio id="player-audio"></audio>
+  </div>
+
   <script src="app.js"></script>
 </body>
 </html>
+

@@ -11,6 +11,7 @@ from orchestrator.llm import stream_story
 from orchestrator.prompts import build_messages
 from orchestrator.scenes import split_into_scenes
 from orchestrator.telemetry import read_stats
+from orchestrator.tts import narrate
 
 PROJECT = Path(__file__).parent.parent
 OUTPUT_DIR = PROJECT / "output"
@@ -39,57 +40,62 @@ async def health():
 
 
 # 3. the story pipeline (NEW): write, plan the scenes, illustrate
-async def tell_story(websocket: WebSocket, settings: dict):
+# 3a. Writing: stream the story, then stop and let the visitor decide
+async def write_story(websocket: WebSocket, settings: dict):
+    await websocket.send_json({"type": "stage", "stage": "The storyteller leans in..."})
+    async for chunk in stream_story(build_messages(settings)):
+        await websocket.send_json({"type": "token", "text": chunk})
+    await websocket.send_json({"type": "written"})
+
+
+# 3b. Bringing it to life: scenes, pictures, and narration
+async def bring_to_life(websocket: WebSocket, story: str):
     story_id = uuid.uuid4().hex[:8]  # a short random name for this story's folder
 
-    # Writing: stream it to the browser, and keep the full text for later
-    await websocket.send_json({"type": "stage", "stage": "The storyteller leans in..."})
-    story = ""
-    async for chunk in stream_story(build_messages(settings)):
-        story += chunk
-        await websocket.send_json({"type": "token", "text": chunk})
-
-    # Planning: split the story into scenes with image prompts
     await websocket.send_json({"type": "stage", "stage": "Picturing the scenes..."})
     scenes = await split_into_scenes(story)
 
-    # Illustrating: one image per scene, sent as soon as each is ready
+    folder = OUTPUT_DIR / story_id
     for number, scene in enumerate(scenes, start=1):
         await websocket.send_json({
             "type": "stage",
-            "stage": f"Painting scene {number} of {len(scenes)}...",
+            "stage": f"Bringing scene {number} of {len(scenes)} to life...",
         })
-        filename = f"scene_{number}.png"
-        await generate_image(scene["image_prompt"], OUTPUT_DIR / story_id / filename)
+        await asyncio.gather(
+            generate_image(scene["image_prompt"], folder / f"scene_{number}.png"),
+            narrate(scene["text"], folder / f"scene_{number}.wav"),
+        )
         await websocket.send_json({
-            "type": "image",
+            "type": "scene",
             "scene": number,
-            "url": f"/output/{story_id}/{filename}",
-            "caption": scene["text"],
+            "total": len(scenes),
+            "image": f"/output/{story_id}/scene_{number}.png",
+            "audio": f"/output/{story_id}/scene_{number}.wav",
+            "text": scene["text"],
         })
 
     await websocket.send_json({"type": "done"})
 
 
-# 4. the story websocket (now hands the work to tell_story)
+# 4. the story websocket: two kinds of request
 @app.websocket("/ws")
 async def story_socket(websocket: WebSocket):
     await websocket.accept()
     try:
         while True:
-            # Wait for the browser to ask for something
             message = await websocket.receive_json()
-
-            if message.get("type") == "start":
-                try:
-                    await tell_story(websocket, message.get("settings", {}))
-                except WebSocketDisconnect:
-                    raise  # the page closed; let the outer handler deal with it
-                except Exception as error:
-                    await websocket.send_json({"type": "error", "message": str(error)})
+            try:
+                if message.get("type") == "start":
+                    await write_story(websocket, message.get("settings", {}))
+                elif message.get("type") == "animate":
+                    story = str(message.get("story", ""))[:20000]  # cap the length
+                    await bring_to_life(websocket, story)
+            except WebSocketDisconnect:
+                raise  # the page closed; let the outer handler deal with it
+            except Exception as error:
+                await websocket.send_json({"type": "error", "message": str(error)})
     except WebSocketDisconnect:
         pass  # The browser closed the page; nothing to clean up
-
 
 # 5. the live GPU stats
 @app.websocket("/stats")
