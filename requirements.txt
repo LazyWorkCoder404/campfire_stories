@@ -1,0 +1,9 @@
+fastapi
+uvicorn[standard]
+httpx
+pydantic
+nvidia-ml-py
+kokoro
+soundfile
+python-docx
+pypdf

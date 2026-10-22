@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Campfire Stories</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- The control panel: the player's choices -->
+  <section id="controls">
+    <h1>Campfire Stories</h1>
+
+    <label>
+      Tone
+      <select id="tone">
+        <option value="classic">Classic</option>
+        <option value="creepy">Creepy</option>
+        <option value="cozy">Cozy</option>
+        <option value="folk">Folk horror</option>
+        <option value="mystery">Mystery</option>
+        <option value="haunted_house">Haunted house</option>
+      </select>
+    </label>
+
+    <label>
+      Length
+      <select id="length">
+        <option value="short">Short</option>
+        <option value="medium" selected>Medium</option>
+        <option value="long">Long</option>
+      </select>
+    </label>
+
+    <label>
+      Scariness <span id="scariness-value">3</span>
+      <input id="scariness" type="range" min="1" max="5" value="3">
+    </label>
+
+    <label>
+      Details
+      <input id="details" type="text" maxlength="300"
+             placeholder="a lighthouse, an old dog, a missing hiker...">
+    </label>
+  </section>
+
+  <!-- The fire: tapping it starts a story -->
+  <button id="fire" aria-label="Tell me a story">
+    <div class="flame"></div>
+    <div class="flame"></div>
+    <div class="flame"></div>
+    <div class="logs"></div>
+  </button>
+  <p id="status">Tap the fire for a story</p>
+
+  <!-- Where the story appears -->
+  <article id="story"></article>
+
+  <script src="app.js"></script>
+</body>
+</html>

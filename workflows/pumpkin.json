@@ -1,0 +1,161 @@
+{
+  "76": {
+    "inputs": {
+      "filename_prefix": "comfyui-airport-editorial",
+      "images": [
+        "30:43",
+        0
+      ]
+    },
+    "class_type": "SaveImage",
+    "_meta": {
+      "title": "Save Image",
+      "cnr_id": "comfy-core",
+      "ver": "0.3.71"
+    }
+  },
+  "30:47": {
+    "inputs": {
+      "shift": 3,
+      "sampling": "flow",
+      "model": [
+        "30:46",
+        0
+      ]
+    },
+    "class_type": "ModelSamplingAuraFlow",
+    "_meta": {
+      "title": "ModelSamplingAuraFlow",
+      "cnr_id": "comfy-core",
+      "ver": "0.3.64"
+    }
+  },
+  "30:42": {
+    "inputs": {
+      "conditioning": [
+        "30:45",
+        0
+      ]
+    },
+    "class_type": "ConditioningZeroOut",
+    "_meta": {
+      "title": "Conditioning Zero Out",
+      "cnr_id": "comfy-core",
+      "ver": "0.3.73"
+    }
+  },
+  "30:46": {
+    "inputs": {
+      "unet_name": "z_image_turbo_bf16.safetensors",
+      "weight_dtype": "default"
+    },
+    "class_type": "UNETLoader",
+    "_meta": {
+      "title": "Load Diffusion Model",
+      "cnr_id": "comfy-core",
+      "ver": "0.3.73"
+    }
+  },
+  "30:39": {
+    "inputs": {
+      "clip_name": "qwen_3_4b.safetensors",
+      "type": "lumina2",
+      "device": "default"
+    },
+    "class_type": "CLIPLoader",
+    "_meta": {
+      "title": "Load CLIP",
+      "cnr_id": "comfy-core",
+      "ver": "0.3.73"
+    }
+  },
+  "30:40": {
+    "inputs": {
+      "vae_name": "ae.safetensors"
+    },
+    "class_type": "VAELoader",
+    "_meta": {
+      "title": "Load VAE",
+      "cnr_id": "comfy-core",
+      "ver": "0.3.73"
+    }
+  },
+  "30:41": {
+    "inputs": {
+      "width": 1280,
+      "height": 720,
+      "batch_size": 1
+    },
+    "class_type": "EmptySD3LatentImage",
+    "_meta": {
+      "title": "EmptySD3LatentImage",
+      "cnr_id": "comfy-core",
+      "ver": "0.3.64"
+    }
+  },
+  "30:43": {
+    "inputs": {
+      "samples": [
+        "30:44",
+        0
+      ],
+      "vae": [
+        "30:40",
+        0
+      ]
+    },
+    "class_type": "VAEDecode",
+    "_meta": {
+      "title": "VAE Decode",
+      "cnr_id": "comfy-core",
+      "ver": "0.3.64"
+    }
+  },
+  "30:45": {
+    "inputs": {
+      "text": "A lone campfire burns in a small clearing deep in an autumn forest on Halloween night. Orange flames crackle and throw sparks upward into the cold air, lighting the ground in a warm, flickering circle while everything beyond it falls into deep blue shadow. Around the fire sit three weathered log benches, a dented tin cup, and an old leather-bound book lying open on a stump, its pages lifting slightly in the wind. Three hand-carved jack-o'-lanterns with crooked, grinning faces glow at the edge of the firelight, their candles burning low.\n\nTall, twisted oak and pine trees surround the clearing, their bare branches reaching like fingers against a huge full moon hanging low in a dark indigo sky. Thin wisps of fog creep between the tree trunks at ground level. Dry red and gold leaves are scattered across the dirt and drift through the air. Deep in the woods behind the trees, two faint pale eyes reflect the firelight, barely visible, watching.\n\nMoody cinematic lighting with strong contrast between the warm orange firelight and the cold blue moonlight. Atmospheric, eerie, cozy and unsettling at the same time. Highly detailed, sharp focus on the fire and pumpkins, soft depth of field in the background, film photography look, subtle grain.",
+      "clip": [
+        "30:39",
+        0
+      ]
+    },
+    "class_type": "CLIPTextEncode",
+    "_meta": {
+      "title": "CLIP Text Encode (Prompt)",
+      "cnr_id": "comfy-core",
+      "ver": "0.3.73"
+    }
+  },
+  "30:44": {
+    "inputs": {
+      "seed": 813755089222227,
+      "steps": 8,
+      "cfg": 1,
+      "sampler_name": "res_multistep",
+      "scheduler": "simple",
+      "denoise": 1,
+      "model": [
+        "30:47",
+        0
+      ],
+      "positive": [
+        "30:45",
+        0
+      ],
+      "negative": [
+        "30:42",
+        0
+      ],
+      "latent_image": [
+        "30:41",
+        0
+      ]
+    },
+    "class_type": "KSampler",
+    "_meta": {
+      "title": "KSampler",
+      "cnr_id": "comfy-core",
+      "ver": "0.3.64"
+    }
+  }
+}
