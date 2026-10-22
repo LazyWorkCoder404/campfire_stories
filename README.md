@@ -2,6 +2,29 @@
 
 Everything runs locally: **Ollama** writes the story, **ComfyUI** paints the illustrations, and **Kokoro** narrates. Nothing calls out to the cloud once it's installed.
 
+## Plug and play style!
+
+You need **Linux (Ubuntu/Debian) with an NVIDIA GPU**, a working driver, and about **45 GB of free disk**.
+
+```bash
+git clone https://github.com/LazyWorkCoder404/campfire_stories.git
+cd campfire_stories
+./setup.sh      # one time only; downloads ~30 GB, so expect 20-60 minutes
+./start.sh      # every time you want to play
+```
+
+`start.sh` launches everything, waits until it's ready, and opens the game in your browser at `http://localhost:8000`. Tap the fire to begin. Press **Ctrl+C** in that terminal to shut it all down.
+
+- `setup.sh` asks for your password once, to install system packages. It's safe to run again: finished steps are skipped and interrupted downloads pick up where they stopped.
+- Want a bigger story model? `CAMPFIRE_LLM=gemma3:27b ./setup.sh`, then `CAMPFIRE_LLM=gemma3:27b ./start.sh`.
+- If something goes wrong, the logs are in `logs/comfyui.log` and `logs/server.log`, and the **Troubleshooting** table at the bottom covers the common problems.
+
+The rest of this README walks through the same setup by hand, for anyone who wants to see what each step does or whose system the scripts don't support.
+
+---
+
+## Manual setup
+
 ## What you need
 
 - **Linux with an NVIDIA GPU** and a working driver (`nvidia-smi` should list your card). Developed on Ubuntu 24.04 on an NVIDIA DGX Spark (GB10, 128 GB unified memory).
