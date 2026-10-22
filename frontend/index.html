@@ -12,37 +12,54 @@
   <section id="controls">
     <h1>Campfire Stories</h1>
 
-    <label>
-      Tone
-      <select id="tone">
-        <option value="classic">Classic</option>
-        <option value="creepy">Creepy</option>
-        <option value="cozy">Cozy</option>
-        <option value="folk">Folk horror</option>
-        <option value="mystery">Mystery</option>
-        <option value="haunted_house">Haunted house</option>
-      </select>
-    </label>
+    <!-- Choose: the AI writes a story, or you bring your own -->
+    <div id="mode-toggle">
+      <button type="button" id="mode-one" class="active">Tell me one</button>
+      <button type="button" id="mode-mine">Tell mine</button>
+    </div>
 
-    <label>
-      Length
-      <select id="length">
-        <option value="short">Short</option>
-        <option value="medium" selected>Medium</option>
-        <option value="long">Long</option>
-      </select>
-    </label>
+    <!-- Options for "Tell me one" -->
+    <div id="ai-options">
+      <label>
+        Tone
+        <select id="tone">
+          <option value="classic">Classic</option>
+          <option value="creepy">Creepy</option>
+          <option value="cozy">Cozy</option>
+          <option value="folk">Folk horror</option>
+          <option value="mystery">Mystery</option>
+          <option value="haunted_house">Haunted house</option>
+        </select>
+      </label>
 
-    <label>
-      Scariness <span id="scariness-value">3</span>
-      <input id="scariness" type="range" min="1" max="5" value="3">
-    </label>
+      <label>
+        Length
+        <select id="length">
+          <option value="short">Short</option>
+          <option value="medium" selected>Medium</option>
+          <option value="long">Long</option>
+        </select>
+      </label>
 
-    <label>
-      Details
-      <input id="details" type="text" maxlength="300"
-             placeholder="a lighthouse, an old dog, a missing hiker...">
-    </label>
+      <label>
+        Scariness <span id="scariness-value">3</span>
+        <input id="scariness" type="range" min="1" max="5" value="3">
+      </label>
+
+      <label>
+        Details
+        <input id="details" type="text" maxlength="300"
+               placeholder="a lighthouse, an old dog, a missing hiker...">
+      </label>
+    </div>
+
+    <!-- Options for "Tell mine" -->
+    <div id="mine-options" hidden>
+      <label>
+        Your story (.txt, .docx, or .pdf)
+        <input id="upload" type="file" accept=".txt,.docx,.pdf">
+      </label>
+    </div>
   </section>
 
   <!-- The fire, with a hardware panel on each side -->
@@ -64,7 +81,7 @@
       <div class="logs"></div>
     </button>
 
-   <aside class="panel">
+    <aside class="panel">
       <h2>Memory</h2>
       <div class="meter"><div id="mem-bar" class="meter-fill"></div></div>
       <p><span id="mem-value">--</span> / <span id="mem-total">--</span> GB</p>
@@ -81,7 +98,7 @@
   <!-- Where the illustrations appear -->
   <section id="gallery"></section>
 
-    <!-- The film player: covers the screen while a story plays -->
+  <!-- The film player: covers the screen while a story plays -->
   <div id="player" title="Click to stop">
     <img id="player-image" alt="">
     <p id="player-subtitle"></p>
@@ -91,4 +108,3 @@
   <script src="app.js"></script>
 </body>
 </html>
-

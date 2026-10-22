@@ -317,3 +317,42 @@ h1 {
 }
 
 #animate[hidden] { display: none; }
+
+/* ---------- Tell me one / Tell mine ---------- */
+[hidden] { display: none !important; }   /* hidden always wins */
+
+#mode-toggle {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  gap: 4px;
+}
+
+#mode-toggle button {
+  padding: 8px 18px;
+  font: inherit;
+  color: var(--muted);
+  background: rgba(0, 0, 0, 0.35);
+  border: 1px solid var(--panel-border);
+  cursor: pointer;
+}
+
+#mode-toggle button:first-child { border-radius: 999px 0 0 999px; }
+#mode-toggle button:last-child  { border-radius: 0 999px 999px 0; }
+
+#mode-toggle button.active {
+  color: #1a0d05;
+  background: var(--ember);
+  border-color: var(--ember);
+}
+
+#ai-options,
+#mine-options {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 16px 24px;
+  width: 100%;
+}
+
+#mine-options input[type="file"] { color: var(--text); }

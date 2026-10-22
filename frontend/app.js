@@ -10,6 +10,11 @@ const playerImage = document.getElementById("player-image");
 const playerSubtitle = document.getElementById("player-subtitle");
 const playerAudio = document.getElementById("player-audio");
 const animateButton = document.getElementById("animate");
+const modeOne = document.getElementById("mode-one");
+const modeMine = document.getElementById("mode-mine");
+const aiOptions = document.getElementById("ai-options");
+const mineOptions = document.getElementById("mine-options");
+const upload = document.getElementById("upload");
 
 // Show the slider's number next to its label as it moves
 scariness.addEventListener("input", () => {
@@ -57,6 +62,15 @@ connect();
 fire.addEventListener("click", () => {
   if (socket.readyState !== WebSocket.OPEN) {
     statusText.textContent = "The fire is still catching... try again in a moment";
+    return;
+  }
+
+  if (mode === "mine") {
+    if (story.textContent) {
+      animateButton.click();            // same as pressing "Bring it to life!"
+    } else {
+      statusText.textContent = "Upload your story first";
+    }
     return;
   }
 
@@ -185,3 +199,49 @@ animateButton.addEventListener("click", () => {
 
   socket.send(JSON.stringify({ type: "animate", story: story.textContent }));
   });
+
+// ---------- Tell me one / Tell mine ----------
+let mode = "one";
+
+function setMode(newMode) {
+  mode = newMode;
+  modeOne.classList.toggle("active", mode === "one");
+  modeMine.classList.toggle("active", mode === "mine");
+  aiOptions.hidden = mode !== "one";
+  mineOptions.hidden = mode !== "mine";
+
+  // Start fresh whenever the mode changes
+  story.textContent = "";
+  gallery.innerHTML = "";
+  animateButton.hidden = true;
+  upload.value = "";
+  statusText.textContent = mode === "one"
+    ? "Tap the fire for a story"
+    : "Upload your story, then tap the fire";
+}
+
+modeOne.addEventListener("click", () => setMode("one"));
+modeMine.addEventListener("click", () => setMode("mine"));
+
+// When a file is chosen, send it to the server and show its text
+upload.addEventListener("change", async () => {
+  const file = upload.files[0];
+  if (!file) return;
+
+  statusText.textContent = "Reading your story...";
+  const form = new FormData();
+  form.append("file", file);
+
+  try {
+    const response = await fetch("/upload", { method: "POST", body: form });
+    const data = await response.json();
+    if (!response.ok) throw new Error(data.detail);
+
+    story.textContent = data.text;
+    gallery.innerHTML = "";
+    animateButton.hidden = false;
+    statusText.textContent = "Your story is ready. Bring it to life, or tap the fire";
+  } catch (error) {
+    statusText.textContent = "The fire couldn't read that: " + error.message;
+  }
+});

@@ -7,3 +7,4 @@ kokoro
 soundfile
 python-docx
 pypdf
+python-multipart

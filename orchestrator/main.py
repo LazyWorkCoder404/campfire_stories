@@ -1,8 +1,9 @@
 import asyncio
 import uuid
 from pathlib import Path
+from pydantic import BaseModel
 
-from fastapi import FastAPI, WebSocket, WebSocketDisconnect
+from fastapi import FastAPI, HTTPException, UploadFile, WebSocket, WebSocketDisconnect
 from fastapi.staticfiles import StaticFiles
 import httpx
 
@@ -12,6 +13,8 @@ from orchestrator.prompts import build_messages
 from orchestrator.scenes import split_into_scenes
 from orchestrator.telemetry import read_stats
 from orchestrator.tts import narrate
+from orchestrator.extract import extract_text
+from orchestrator.editor import suggest_edits
 
 PROJECT = Path(__file__).parent.parent
 OUTPUT_DIR = PROJECT / "output"
@@ -38,6 +41,29 @@ async def health():
                 results[name] = False
     return results
 
+# Upload a story file and get its text back
+@app.post("/upload")
+async def upload(file: UploadFile):
+    data = await file.read()
+    if len(data) > 5_000_000:
+        raise HTTPException(status_code=413, detail="That file is too big (5 MB max)")
+    try:
+        return {"text": extract_text(file.filename or "", data)}
+    except ValueError as error:
+        raise HTTPException(status_code=400, detail=str(error))
+    except Exception:
+        raise HTTPException(status_code=400, detail="Sorry, that file couldn't be read")
+
+class EditRequest(BaseModel):
+    story: str
+    focus: str = ""
+
+# Ask the horror editor for suggestions
+@app.post("/edit")
+async def edit(request: EditRequest):
+    story = request.story[:12000]
+    focus = request.focus[:200]
+    return {"suggestions": await suggest_edits(story, focus)}
 
 # 3. the story pipeline (NEW): write, plan the scenes, illustrate
 # 3a. Writing: stream the story, then stop and let the visitor decide
