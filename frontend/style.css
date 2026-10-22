@@ -158,3 +158,66 @@ h1 {
 }
 
 #story:empty { display: none; }   /* hide the box until there's a story */
+
+/* ---------- The stage: panel, fire, panel ---------- */
+#stage {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 40px;
+}
+
+.panel {
+  width: 170px;
+  padding: 16px;
+  background: var(--panel);
+  border: 1px solid var(--panel-border);
+  border-radius: 14px;
+  font-size: 0.9rem;
+  color: var(--muted);
+}
+
+.panel h2 {
+  margin: 0 0 10px;
+  font-size: 0.8rem;
+  font-weight: normal;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+}
+
+.panel p { margin: 6px 0 0; }
+.panel span { color: var(--text); }
+.panel .hint { font-size: 0.75rem; font-style: italic; }
+
+.meter {
+  height: 8px;
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.08);
+  overflow: hidden;
+}
+
+.meter-fill {
+  width: 0%;
+  height: 100%;
+  background: linear-gradient(90deg, #ffb03b, var(--ember));
+  transition: width 0.3s;
+}
+
+/* ---------- The fire follows the GPU ---------- */
+/* --heat goes from 0 (idle) to 1 (GPU fully busy); JavaScript sets it */
+.flames {
+  position: absolute;
+  inset: 0;
+  transform-origin: 50% 85%;
+  transform: scale(calc(0.75 + var(--heat, 0) * 0.6));
+  filter: brightness(calc(0.8 + var(--heat, 0) * 0.5));
+  transition: transform 0.4s, filter 0.4s;
+}
+
+.logs {
+  box-shadow: 0 0 calc(30px + var(--heat, 0) * 70px)
+                  calc(8px + var(--heat, 0) * 25px)
+                  rgba(255, 122, 26, calc(0.25 + var(--heat, 0) * 0.45));
+  transition: box-shadow 0.4s;
+}

@@ -45,13 +45,33 @@
     </label>
   </section>
 
-  <!-- The fire: tapping it starts a story -->
-  <button id="fire" aria-label="Tell me a story">
-    <div class="flame"></div>
-    <div class="flame"></div>
-    <div class="flame"></div>
-    <div class="logs"></div>
-  </button>
+  <!-- The fire, with a hardware panel on each side -->
+  <section id="stage">
+    <aside class="panel">
+      <h2>GPU</h2>
+      <div class="meter"><div id="gpu-bar" class="meter-fill"></div></div>
+      <p><span id="gpu-value">0</span>% busy</p>
+      <p><span id="temp-value">--</span> °C</p>
+      <p><span id="power-value">--</span> W</p>
+    </aside>
+
+    <button id="fire" aria-label="Tell me a story">
+      <div class="flames">
+        <div class="flame"></div>
+        <div class="flame"></div>
+        <div class="flame"></div>
+      </div>
+      <div class="logs"></div>
+    </button>
+
+   <aside class="panel">
+      <h2>Memory</h2>
+      <div class="meter"><div id="mem-bar" class="meter-fill"></div></div>
+      <p><span id="mem-value">--</span> / <span id="mem-total">--</span> GB</p>
+      <p class="hint">Shared by CPU and GPU</p>
+    </aside>
+  </section>
+
   <p id="status">Tap the fire for a story</p>
 
   <!-- Where the story appears -->

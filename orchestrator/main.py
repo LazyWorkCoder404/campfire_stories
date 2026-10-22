@@ -1,9 +1,12 @@
+import asyncio
+
 from fastapi import FastAPI, WebSocket, WebSocketDisconnect
 from fastapi.staticfiles import StaticFiles
 import httpx
 
 from orchestrator.llm import stream_story
 from orchestrator.prompts import build_messages
+from orchestrator.telemetry import read_stats
 
 # 1. create the app
 app = FastAPI(title="Campfire Stories")
@@ -13,7 +16,7 @@ SERVICES = {
     "comfyui": "http://127.0.0.1:8188/system_stats",
 }
 
-#The health check
+#2 The health check
 @app.get("/health")
 async def health():
     results = {}
@@ -46,5 +49,16 @@ async def story_socket(websocket: WebSocket):
         pass  # The browser closed the page; nothing to clean up
 
 
-# 4. Serve the frontend (keep this last so it doesn't shadow the routes above)
+# 4. the live GPU stats
+@app.websocket("/stats")
+async def stats_socket(websocket: WebSocket):
+    await websocket.accept()
+    try:
+        while True:
+            await websocket.send_json(read_stats())
+            await asyncio.sleep(0.2)  # five readings per second
+    except Exception:
+        pass  # The page was closed; stop sending
+
+# 5. Serve the frontend (keep this last so it doesn't shadow the routes above)
 app.mount("/", StaticFiles(directory="frontend", html=True), name="frontend")

@@ -65,3 +65,35 @@ function finish(text) {
   fire.classList.remove("roaring");
   statusText.textContent = text;
 }
+
+// ---------- Live hardware stats ----------
+const gpuBar = document.getElementById("gpu-bar");
+const memBar = document.getElementById("mem-bar");
+
+function showStats(stats) {
+  // GPU panel
+  document.getElementById("gpu-value").textContent = stats.gpu;
+  document.getElementById("temp-value").textContent = stats.temp ?? "--";
+  document.getElementById("power-value").textContent = stats.power ?? "--";
+  gpuBar.style.width = stats.gpu + "%";
+
+  // Memory panel
+  document.getElementById("mem-value").textContent = stats.mem_used;
+  document.getElementById("mem-total").textContent = stats.mem_total;
+  memBar.style.width = (stats.mem_used / stats.mem_total) * 100 + "%";
+
+  // The fire: 0% busy -> heat 0, 100% busy -> heat 1
+  fire.style.setProperty("--heat", stats.gpu / 100);
+}
+
+function connectStats() {
+  const statsSocket = new WebSocket(`ws://${location.host}/stats`);
+  statsSocket.addEventListener("message", (event) => {
+    showStats(JSON.parse(event.data));
+  });
+  statsSocket.addEventListener("close", () => {
+    setTimeout(connectStats, 1000);
+  });
+}
+
+connectStats();
