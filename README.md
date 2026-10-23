@@ -1,3 +1,10 @@
+# To run the game
+
+Terminal 1: ./scripts/start_comfyui.sh
+Terminal 2:  source .venv/bin/activate
+            uvicorn orchestrator.main:app --reload --port 8000
+
+
 # Campfire Stories: Setup and Running
 
 Everything runs locally: **Ollama** writes the story, **ComfyUI** paints the illustrations, and **Kokoro** narrates. Nothing calls out to the cloud once it's installed.
